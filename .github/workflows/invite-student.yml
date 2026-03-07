@@ -1,0 +1,64 @@
+name: Invite New Student
+
+on:
+  workflow_dispatch:
+    inputs:
+      student_username:
+        description: 'Student's GitHub username'
+        required: true
+        type: string
+      student_name:
+        description: 'Student's full name'
+        required: true
+        type: string
+      first_mission:
+        description: 'First mission ID (default: python-mission-1)'
+        required: false
+        default: 'python-mission-1'
+        type: string
+
+jobs:
+  invite-student:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      
+    steps:
+      - name: Checkout master repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Create student file
+        run: |
+          # Copy template and fill in student details
+          cp students/TEMPLATE.json students/${{ github.event.inputs.student_username }}.json
+          
+          # Replace placeholders
+          sed -i "s/STUDENT_ID/$(uuidgen)/g" students/${{ github.event.inputs.student_username }}.json
+          sed -i "s/GITHUB_USERNAME/${{ github.event.inputs.student_username }}/g" students/${{ github.event.inputs.student_username }}.json
+          sed -i "s/FULL_NAME/${{ github.event.inputs.student_name }}/g" students/${{ github.event.inputs.student_username }}.json
+          sed -i "s/2024-01-01/$(date +%Y-%m-%d)/g" students/${{ github.event.inputs.student_username }}.json
+          sed -i "s/python-mission-1/${{ github.event.inputs.first_mission }}/g" students/${{ github.event.inputs.student_username }}.json
+
+      - name: Commit student file
+        run: |
+          git config user.name "CodeQuest Bot"
+          git config user.email "bot@codequest.dev"
+          git add students/
+          git commit -m "✨ Add new student: ${{ github.event.inputs.student_username }}"
+          git push
+
+      - name: Create student's first mission repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # This step will call a Python script to create the repo
+          # We'll build this next!
+          echo "Creating repo for ${{ github.event.inputs.student_username }}..."
+          
+      - name: Welcome message
+        run: |
+          echo "✅ Student ${{ github.event.inputs.student_name }} (@${{ github.event.inputs.student_username }}) has been added!"
+          echo "First mission: ${{ github.event.inputs.first_mission }}"
