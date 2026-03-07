@@ -1,0 +1,15 @@
+{
+  "student": {
+    "id": "88d5168a-665b-4e64-8620-81b49ea06117",
+    "username": "dummytestrun",
+    "name": "Mishael Junior ",
+    "joined": "2026-03-07",
+    "status": "active"
+  },
+  "progress": {
+    "xp": 0,
+    "completedMissions": [],
+    "currentMission": "python-mission-1",
+    "badges": []
+  }
+}
