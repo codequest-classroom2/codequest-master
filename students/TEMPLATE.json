@@ -1,0 +1,15 @@
+{
+  "student": {
+    "id": "STUDENT_ID",
+    "username": "GITHUB_USERNAME",
+    "name": "FULL_NAME",
+    "joined": "2024-01-01",
+    "status": "active"
+  },
+  "progress": {
+    "xp": 0,
+    "completedMissions": [],
+    "currentMission": "python-mission-1",
+    "badges": []
+  }
+}
