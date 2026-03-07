@@ -50,13 +50,23 @@ jobs:
           git commit -m "✨ Add new student: ${{ github.event.inputs.student_username }}"
           git push
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
       - name: Create student's first mission repo
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # This step will call a Python script to create the repo
-          # We'll build this next!
-          echo "Creating repo for ${{ github.event.inputs.student_username }}..."
+          python .github/workflows/create-student-repo.py \
+            "${{ github.event.inputs.student_username }}" \
+            "${{ github.event.inputs.student_name }}" \
+            "${{ github.event.inputs.first_mission }}"
           
       - name: Welcome message
         run: |
