@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    "Variable 'name' exists and is a string",
+    "Variable 'age' exists and is a number",
+    "Print statement outputs both variables",
+    "At least 3 lines of code"
+  ],
+  "xpReward": 50,
+  "badge": "python-novice"
+}
