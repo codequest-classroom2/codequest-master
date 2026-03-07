@@ -1,0 +1,78 @@
+{
+  "id": "web-dev",
+  "name": "Web Development",
+  "description": "Build websites with HTML, CSS, and JavaScript",
+  "icon": "🌐",
+  "color": "#E44D26",
+  
+  "levels": [
+    {
+      "id": "web-level-1",
+      "name": "HTML Basics",
+      "order": 1,
+      "description": "Structure your first web pages",
+      "pointsToUnlock": 0,
+      "missions": ["html-1-1", "html-1-2", "html-1-3"],
+      "minMissionsToComplete": 2,
+      "pointsPerMission": 5,
+      "unlocks": ["web-level-2"]
+    },
+    {
+      "id": "web-level-2",
+      "name": "CSS Basics",
+      "order": 2,
+      "description": "Make things beautiful",
+      "pointsToUnlock": 10,
+      "missions": ["css-2-1", "css-2-2", "css-2-3"],
+      "minMissionsToComplete": 2,
+      "pointsPerMission": 8,
+      "unlocks": ["web-level-3"]
+    },
+    {
+      "id": "web-level-3",
+      "name": "CSS Layout",
+      "order": 3,
+      "description": "Arrange elements on the page",
+      "pointsToUnlock": 26,
+      "missions": ["css-3-1", "css-3-2", "css-3-3"],
+      "minMissionsToComplete": 2,
+      "pointsPerMission": 10,
+      "unlocks": ["web-level-4"]
+    },
+    {
+      "id": "web-level-4",
+      "name": "JavaScript Basics",
+      "order": 4,
+      "description": "Make things interactive",
+      "pointsToUnlock": 46,
+      "missions": ["js-4-1", "js-4-2", "js-4-3"],
+      "minMissionsToComplete": 2,
+      "pointsPerMission": 12,
+      "unlocks": ["react-path", "vue-path", "backend-path"]
+    }
+  ],
+  
+  "branches": {
+    "react-path": {
+      "name": "React.js",
+      "description": "Build modern web apps",
+      "pointsToUnlock": 100,
+      "icon": "⚛️",
+      "color": "#61DAFB"
+    },
+    "vue-path": {
+      "name": "Vue.js",
+      "description": "Progressive JavaScript framework",
+      "pointsToUnlock": 100,
+      "icon": "🟢",
+      "color": "#42B883"
+    },
+    "backend-path": {
+      "name": "Backend Development",
+      "description": "Server-side programming",
+      "pointsToUnlock": 150,
+      "icon": "⚙️",
+      "color": "#404040"
+    }
+  }
+}
