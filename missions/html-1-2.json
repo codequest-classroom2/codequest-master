@@ -1,0 +1,25 @@
+{
+  "id": "html-1-2",
+  "title": "Text and Headings",
+  "level": "web-level-1",
+  "order": 2,
+  "points": 5,
+  "badge": "html-novice",
+  "description": "Add headings and paragraphs",
+  
+  "instructions": "Add an h1 heading and a paragraph to your page",
+  "starterCode": "<!DOCTYPE html>\n<html>\n<head>\n    <title>My Page</title>\n</head>\n<body>\n    <!-- Add your code here -->\n</body>\n</html>",
+  
+  "requirements": [
+    "Must have an h1 heading",
+    "Must have at least one paragraph",
+    "Content must be in the body section"
+  ],
+  
+  "tests": [
+    "grep -i '<h1>' index.html",
+    "grep -i '<p>' index.html"
+  ],
+  
+  "nextMissions": ["html-1-3"]
+}
