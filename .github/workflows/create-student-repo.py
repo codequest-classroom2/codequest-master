@@ -18,6 +18,12 @@ def create_student_repo(student_username, student_name, mission_id):
         return False
         
     org_name = "codequest-classroom"
+    template_repo = "codequest-templates"
+    
+    print(f"🔧 Configuration:")
+    print(f"   - Organization: {org_name}")
+    print(f"   - Template repo: {template_repo}")
+    print(f"   - Token starts with: {token[:4]}... (hidden)")
     
     # Load student data
     try:
@@ -81,9 +87,48 @@ def create_student_repo(student_username, student_name, mission_id):
         "Accept": "application/vnd.github.v3+json"
     }
     
+    # DEBUG: Test access to template repo first
+    print("\n🔍 DEBUG: Testing access to template repository...")
+    test_url = f"https://api.github.com/repos/{org_name}/{template_repo}"
+    print(f"   GET {test_url}")
+    
+    try:
+        test_response = requests.get(test_url, headers=headers)
+        print(f"   Response status: {test_response.status_code}")
+        
+        if test_response.status_code == 200:
+            print(f"   ✅ SUCCESS! Template repo is accessible!")
+            template_data = test_response.json()
+            print(f"   📝 Repo name: {template_data.get('name')}")
+            print(f"   📝 Description: {template_data.get('description', 'No description')}")
+            print(f"   📝 Private: {template_data.get('private')}")
+            print(f"   📝 Default branch: {template_data.get('default_branch')}")
+        elif test_response.status_code == 404:
+            print(f"   ❌ FAILED: Template repo NOT FOUND!")
+            print(f"   Possible issues:")
+            print(f"     1. Repo name is not '{template_repo}'")
+            print(f"     2. Repo is in a different organization")
+            print(f"     3. You don't have access to this repo")
+            print(f"\n   🔍 Check manually: https://github.com/{org_name}/{template_repo}")
+        elif test_response.status_code == 401:
+            print(f"   ❌ FAILED: Authentication error!")
+            print(f"      Your token is invalid or expired")
+        elif test_response.status_code == 403:
+            print(f"   ❌ FAILED: Permission denied!")
+            print(f"      Your token doesn't have access to this repo")
+            print(f"      Make sure token has 'repo' scope")
+        else:
+            print(f"   ⚠️ Unexpected response: {test_response.status_code}")
+            print(f"   Response: {test_response.text[:200]}")
+    except Exception as e:
+        print(f"   ❌ Error testing template access: {e}")
+        traceback.print_exc()
+    
     # Step 1: Create repo from template
-    print(f"📞 Calling GitHub API to create repo from template...")
-    create_url = f"https://api.github.com/repos/{org_name}/codequest-templates/generate"
+    print("\n📞 Attempting to create repo from template...")
+    create_url = f"https://api.github.com/repos/{org_name}/{template_repo}/generate"
+    print(f"   POST {create_url}")
+    
     payload = {
         "owner": org_name,
         "name": repo_name,
@@ -92,17 +137,38 @@ def create_student_repo(student_username, student_name, mission_id):
         "include_all_branches": False
     }
     
+    print(f"   Payload: {json.dumps(payload, indent=2)}")
+    
     try:
         response = requests.post(create_url, headers=headers, json=payload)
         
+        print(f"   Response status: {response.status_code}")
+        
         if response.status_code != 201:
             print(f"❌ Failed to create repo: HTTP {response.status_code}")
-            print(f"Response: {response.text}")
+            print(f"Response body: {response.text}")
+            
+            # Provide helpful error messages
+            if response.status_code == 404:
+                print("\n💡 TROUBLESHOOTING 404:")
+                print("   1. Verify the template repo exists: https://github.com/{org_name}/{template_repo}")
+                print("   2. Make sure the repo name is exactly '{template_repo}'")
+                print("   3. Check that your token has access to this private repo")
+                print("   4. Try accessing the repo manually in your browser")
+            elif response.status_code == 401:
+                print("\n💡 TROUBLESHOOTING 401:")
+                print("   1. Your token is invalid or expired")
+                print("   2. Generate a new token with 'repo' and 'workflow' scopes")
+            elif response.status_code == 403:
+                print("\n💡 TROUBLESHOOTING 403:")
+                print("   1. Your token doesn't have permission")
+                print("   2. Make sure token has 'repo' scope for private repos")
+            
             return False
         
         repo_data = response.json()
         repo_url = repo_data['html_url']
-        print(f"✅ Repo created successfully!")
+        print(f"✅ SUCCESS! Repo created successfully!")
         print(f"🔗 URL: {repo_url}")
     except Exception as e:
         print(f"❌ Error creating repo: {e}")
@@ -110,7 +176,7 @@ def create_student_repo(student_username, student_name, mission_id):
         return False
     
     # Step 2: Add student as collaborator
-    print(f"📞 Adding {student_username} as collaborator...")
+    print(f"\n📞 Adding {student_username} as collaborator...")
     collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
     try:
         collab_response = requests.put(collab_url, headers=headers)
@@ -126,7 +192,7 @@ def create_student_repo(student_username, student_name, mission_id):
         print(f"⚠️ Error adding collaborator: {e}")
     
     # Step 3: Customize the repo with student's data
-    print(f"📝 Customizing repo files...")
+    print(f"\n📝 Customizing repo files...")
     
     files_to_update = [
         ("identity.json", json.dumps({
@@ -166,7 +232,7 @@ def create_student_repo(student_username, student_name, mission_id):
                 else:
                     print(f"   ⚠️ Failed to update {file_path}: HTTP {update_response.status_code}")
             else:
-                print(f"   ⚠️ Could not find {file_path} in repo (HTTP {get_response.status_code})")
+                print(f"   ⚠️ Could not find {file_path} in repo (HTTP {get_response.status_code}) - this might be normal for new repos")
         except Exception as e:
             print(f"   ⚠️ Error updating {file_path}: {e}")
     
@@ -177,9 +243,9 @@ def create_student_repo(student_username, student_name, mission_id):
     return True
 
 if __name__ == "__main__":
-    print("=" * 50)
+    print("=" * 60)
     print("CREATE STUDENT REPO SCRIPT STARTING")
-    print("=" * 50)
+    print("=" * 60)
     
     # Check arguments
     if len(sys.argv) < 4:
