@@ -1,0 +1,28 @@
+{
+  "id": "html-1-1",
+  "title": "HTML Document Structure",
+  "level": "web-level-1",
+  "order": 1,
+  "points": 5,
+  "badge": "html-novice",
+  "description": "Create a basic HTML page with proper structure",
+  
+  "instructions": "Create an HTML file with doctype, html, head, and body tags",
+  "starterCode": "<!DOCTYPE html>\n<html>\n<head>\n    <title>My First Page</title>\n</head>\n<body>\n    \n</body>\n</html>",
+  
+  "requirements": [
+    "Must include DOCTYPE declaration",
+    "Must have html tags",
+    "Must have head section with title",
+    "Must have body section"
+  ],
+  
+  "tests": [
+    "grep -i '<!DOCTYPE html>' index.html",
+    "grep -i '<html>' index.html",
+    "grep -i '<head>' index.html",
+    "grep -i '<body>' index.html"
+  ],
+  
+  "nextMissions": ["html-1-2", "html-1-3"]
+}
