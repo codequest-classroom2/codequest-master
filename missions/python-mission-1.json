@@ -1,0 +1,7 @@
+{
+  "id": "python-mission-1",
+  "title": "Variables and Print",
+  "description": "Create variables with your name and age, then print them",
+  "points": 50,
+  "nextMission": "python-mission-2"
+}
