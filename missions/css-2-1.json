@@ -5,22 +5,13 @@
   "order": 1,
   "points": 8,
   "badge": "css-novice",
-  "description": "Style elements with selectors",
-  
-  "instructions": "Add CSS to style your HTML page",
-  "starterCode": "/* style.css */\n\nh1 {\n    /* Add styles here */\n}\n\np {\n    /* Add styles here */\n}",
-  
+  "description": "Style elements with CSS selectors",
+  "template": "basic-web-mission",
+  "nextInLevel": ["css-2-2", "css-2-3"],
   "requirements": [
-    "Style h1 with color",
-    "Style paragraphs with font-size",
-    "Use at least one class selector"
-  ],
-  
-  "tests": [
-    "grep -i 'color' style.css",
-    "grep -i 'font-size' style.css",
-    "grep -i '\\.' style.css"
-  ],
-  
-  "nextMissions": ["css-2-2", "css-2-3"]
+    "Must have a style.css file",
+    "Must style h1 with color",
+    "Must style paragraphs with font-size",
+    "HTML must link to the CSS file"
+  ]
 }
