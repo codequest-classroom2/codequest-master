@@ -1,1 +1,16 @@
-
+{
+  "id": "html-1-3",
+  "title": "Links and Images",
+  "level": "web-level-1",
+  "order": 3,
+  "points": 5,
+  "badge": "html-novice",
+  "description": "Add links and images to your page",
+  "template": "basic-web-mission",
+  "nextInLevel": [],
+  "requirements": [
+    "Must have an anchor tag <a> with href",
+    "Must have an image tag <img> with src",
+    "Image must have alt attribute"
+  ]
+}
