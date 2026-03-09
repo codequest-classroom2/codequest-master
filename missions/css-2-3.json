@@ -1,0 +1,16 @@
+{
+  "id": "css-2-3",
+  "title": "Colors and Backgrounds",
+  "level": "web-level-2",
+  "order": 3,
+  "points": 8,
+  "badge": "css-novice",
+  "description": "Use colors and backgrounds effectively",
+  "template": "basic-web-mission",
+  "nextInLevel": [],
+  "requirements": [
+    "Must set background-color on body",
+    "Must set color on at least one element",
+    "Must use at least two different colors"
+  ]
+}
