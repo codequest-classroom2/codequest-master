@@ -1,0 +1,16 @@
+{
+  "id": "css-2-2",
+  "title": "Box Model",
+  "level": "web-level-2",
+  "order": 2,
+  "points": 8,
+  "badge": "css-novice",
+  "description": "Understand padding, margin, and borders",
+  "template": "basic-web-mission",
+  "nextInLevel": ["css-2-3"],
+  "requirements": [
+    "Must use padding property",
+    "Must use margin property",
+    "Must use border property"
+  ]
+}
