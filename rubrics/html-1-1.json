@@ -1,0 +1,27 @@
+{
+  "missionId": "html-1-1",
+  "checks": [
+    {
+      "name": "DOCTYPE declaration",
+      "test": "grep -i '<!DOCTYPE html>' submissions/index.html",
+      "feedback": "Add <!DOCTYPE html> at the very top of your file"
+    },
+    {
+      "name": "HTML tags",
+      "test": "grep -i '<html>' submissions/index.html && grep -i '</html>' submissions/index.html",
+      "feedback": "Make sure you have both opening <html> and closing </html> tags"
+    },
+    {
+      "name": "Head section",
+      "test": "grep -i '<head>' submissions/index.html && grep -i '</head>' submissions/index.html",
+      "feedback": "Add <head> section with title"
+    },
+    {
+      "name": "Body section",
+      "test": "grep -i '<body>' submissions/index.html && grep -i '</body>' submissions/index.html",
+      "feedback": "Add <body> section for your content"
+    }
+  ],
+  "totalPoints": 5,
+  "passingScore": 4
+}
