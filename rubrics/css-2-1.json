@@ -1,1 +1,23 @@
 
+{
+  "missionId": "css-2-1",
+  "checks": [
+    {
+      "name": "CSS file exists",
+      "test": "test -f submissions/style.css",
+      "feedback": "Create a style.css file in submissions folder"
+    },
+    {
+      "name": "Link CSS in HTML",
+      "test": "grep -i '<link .*css' submissions/index.html",
+      "feedback": "Link your CSS file in the HTML head section"
+    },
+    {
+      "name": "Style h1",
+      "test": "grep -i 'h1.*{' submissions/style.css && grep -i 'color:' submissions/style.css",
+      "feedback": "Style your h1 with a color property"
+    }
+  ],
+  "totalPoints": 8,
+  "passingScore": 6
+}
