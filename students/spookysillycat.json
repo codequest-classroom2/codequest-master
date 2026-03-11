@@ -1,0 +1,15 @@
+{
+  "student": {
+    "id": "94cc006e-8ad0-427e-b0bb-8365766448f0",
+    "username": "spookysillycat",
+    "name": "Mishael jr.",
+    "joined": "2026-03-11",
+    "status": "active"
+  },
+  "progress": {
+    "xp": 0,
+    "completedMissions": [],
+    "currentMission": "html-1-1",
+    "badges": []
+  }
+}
