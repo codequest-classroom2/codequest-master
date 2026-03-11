@@ -1,0 +1,15 @@
+{
+  "student": {
+    "id": "924745fb-994e-4420-90c6-44c2bfecb674",
+    "username": "cykau6-code",
+    "name": "DEMO",
+    "joined": "2026-03-11",
+    "status": "active"
+  },
+  "progress": {
+    "xp": 0,
+    "completedMissions": [],
+    "currentMission": "html-1-1",
+    "badges": []
+  }
+}
