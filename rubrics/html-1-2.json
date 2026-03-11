@@ -1,0 +1,17 @@
+{
+  "missionId": "html-1-2",
+  "checks": [
+    {
+      "name": "H1 heading",
+      "test": "grep -i '<h1>' submissions/index.html",
+      "feedback": "Add an <h1> heading - it's like a big title!"
+    },
+    {
+      "name": "Paragraph",
+      "test": "grep -i '<p>' submissions/index.html",
+      "feedback": "Add at least one <p> paragraph for text"
+    }
+  ],
+  "totalPoints": 5,
+  "passingScore": 4
+}
