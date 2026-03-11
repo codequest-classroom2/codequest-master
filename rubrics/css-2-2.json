@@ -1,0 +1,22 @@
+{
+  "missionId": "css-2-2",
+  "checks": [
+    {
+      "name": "Padding property",
+      "test": "grep -i 'padding:' submissions/style.css",
+      "feedback": "Add padding property to an element"
+    },
+    {
+      "name": "Margin property",
+      "test": "grep -i 'margin:' submissions/style.css",
+      "feedback": "Add margin property to an element"
+    },
+    {
+      "name": "Border property",
+      "test": "grep -i 'border:' submissions/style.css",
+      "feedback": "Add border property to an element"
+    }
+  ],
+  "totalPoints": 8,
+  "passingScore": 6
+}
