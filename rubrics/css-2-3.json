@@ -1,0 +1,22 @@
+{
+  "missionId": "css-2-3",
+  "checks": [
+    {
+      "name": "Background color",
+      "test": "grep -i 'background-color:' submissions/style.css",
+      "feedback": "Set a background-color on body or an element"
+    },
+    {
+      "name": "Text color",
+      "test": "grep -i 'color:' submissions/style.css",
+      "feedback": "Set text color on at least one element"
+    },
+    {
+      "name": "Multiple colors",
+      "test": "grep -i 'color:' submissions/style.css | wc -l | grep -q '[2-9]'",
+      "feedback": "Use at least two different colors in your CSS"
+    }
+  ],
+  "totalPoints": 8,
+  "passingScore": 6
+}
