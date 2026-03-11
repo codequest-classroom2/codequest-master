@@ -6,208 +6,111 @@ import sys
 import time
 
 def create_student_repo(student_username, student_name, mission_id):
-    """Create a personalized mission repo for a student"""
+    """Generates a private mission repo and ensures the student's portfolio site exists."""
     
     token = os.environ.get("GH_TOKEN")
     org_name = "codequest-classroom"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
     
-    print(f"\n{'='*60}")
-    print(f"📦 Starting repo creation for {student_username}...")
-    print(f"{'='*60}")
-    
-    # Load student data
+    # 1. Select the correct template based on Mission ID
+    if mission_id.startswith(('html-', 'css-', 'js-')):
+        template_name = "basic-web-mission"
+    else:
+        template_name = "basic-python-mission"
+
+    # 2. Load Local Master Data
     try:
         with open(f"students/{student_username}.json", 'r') as f:
             student_data = json.load(f)
-        print(f"✅ Loaded student data for {student_name}")
-    except Exception as e:
-        print(f"❌ Could not load student file: {e}")
-        return False
-    
-    # Determine which template to use based on mission_id
-    if mission_id.startswith(('html-', 'css-', 'js-')):
-        template_name = "basic-web-mission"
-        print(f"🎨 Using web mission template: {template_name}")
-    else:
-        template_name = "basic-python-mission"
-        print(f"🐍 Using Python mission template: {template_name}")
-    
-    # Load mission data
-    try:
         with open(f"missions/{mission_id}.json", 'r') as f:
             mission_data = json.load(f)
-        print(f"✅ Loaded mission: {mission_data.get('title', mission_id)}")
-    except Exception as e:
-        print(f"❌ Could not load mission file: {e}")
-        return False
-    
-    # Load rubric
-    try:
         with open(f"rubrics/{mission_id}.json", 'r') as f:
             rubric_data = json.load(f)
-        print(f"✅ Loaded rubric with {len(rubric_data.get('checks', []))} checks")
-    except Exception as e:
-        print(f"⚠️ Could not load rubric file: {e}")
-        # Fallback rubric structure
-        rubric_data = {"checks": [], "totalPoints": mission_data.get('points', 0), "passingScore": 1}
-    
-    # Create mission repo
+    except FileNotFoundError as e:
+        print(f"❌ Error: Missing configuration file: {e}")
+        return False
+
     repo_name = f"{student_username}-{mission_id}"
-    headers = {
-        "Authorization": f"token {token}",
-        "Accept": "application/vnd.github.v3+json"
+    
+    # 3. Generate the Private Repo from Template
+    print(f"📦 Generating {repo_name} from {template_name}...")
+    create_url = f"https://api.github.com/repos/{org_name}/{template_name}/generate"
+    payload = {
+        "owner": org_name,
+        "name": repo_name,
+        "description": f"Quest: {mission_data.get('title')} | Student: {student_name}",
+        "private": True,
+        "include_all_branches": False
     }
     
-    print(f"\n📦 Creating mission repo: {repo_name}")
+    response = requests.post(create_url, headers=headers, json=payload)
     
-    # Check if repo already exists
-    check_url = f"https://api.github.com/repos/{org_name}/{repo_name}"
-    check_response = requests.get(check_url, headers=headers)
-    
-    if check_response.status_code == 200:
-        print(f"⚠️ Repo {repo_name} already exists! Skipping creation...")
-        repo_url = check_response.json()['html_url']
-    else:
-        # FIX: Use the specific template_name determined above
-        create_url = f"https://api.github.com/repos/{org_name}/{template_name}/generate"
+    if response.status_code == 201:
+        print(f"✅ Repo created. Waiting for GitHub to provision...")
+        time.sleep(5) # Essential for GitHub to finalize the new repo
         
-        payload = {
-            "owner": org_name,
-            "name": repo_name,
-            "description": f"{mission_data.get('title', mission_id)} for {student_name}",
-            "private": True,  # FIX: Set to True so other students can't see it
-            "include_all_branches": False
+        # 4. Invite Student as Collaborator (Push access)
+        collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
+        requests.put(collab_url, headers=headers, json={"permission": "push"})
+        print(f"👤 {student_username} invited to collaborate.")
+
+        # 5. Push Mission Files to the Student's Repo
+        # We wrap the data to match the structure expected by script.js and review.py
+        identity_content = {
+            "username": student_username,
+            "name": student_name,
+            "xp": student_data.get("progress", {}).get("xp", 0),
+            "completedMissions": student_data.get("progress", {}).get("completedMissions", []),
+            "currentMission": mission_id
         }
-        
-        response = requests.post(create_url, headers=headers, json=payload)
-        
-        if response.status_code != 201:
-            print(f"❌ Failed to create mission repo from {template_name}: {response.text}")
-            return False
-        
-        repo_data = response.json()
-        repo_url = repo_data['html_url']
-        print(f"✅ Mission repo created: {repo_url}")
-        # Wait a moment for GitHub to finish background provisioning
-        time.sleep(3)
-    
-    # Add student as collaborator
-    collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
-    # Setting permission to 'push' (Write access)
-    collab_payload = {"permission": "push"}
-    collab_response = requests.put(collab_url, headers=headers, json=collab_payload)
-    
-    if collab_response.status_code == 201:
-        print(f"✅ Invited {student_username} as collaborator")
-    elif collab_response.status_code == 204:
-        print(f"✅ {student_username} is already a collaborator")
-    
-    # Update identity.json with student-specific context
-    identity_content = {
-        "username": student_username,
-        "name": student_name,
-        "xp": student_data.get("progress", {}).get("xp", 0),
-        "badges": student_data.get("progress", {}).get("badges", []),
-        "completedMissions": student_data.get("progress", {}).get("completedMissions", []),
-        "currentMission": mission_id
-    }
-    
-    # Files to push into the new repo
-    files_to_update = [
-        ("identity.json", identity_content),
-        ("mission.json", mission_data),
-        ("rubric.json", rubric_data)
-    ]
-    
-    for file_path, content in files_to_update:
-        try:
-            # Get file SHA (required for updates)
-            get_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/{file_path}"
-            get_response = requests.get(get_url, headers=headers)
+
+        files_to_push = [
+            ("identity.json", identity_content),
+            ("mission.json", mission_data),
+            ("rubric.json", rubric_data)
+        ]
+
+        for filename, content in files_to_push:
+            file_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/{filename}"
+            # Check for existing file SHA (though shouldn't exist in a fresh template)
+            get_res = requests.get(file_url, headers=headers)
+            sha = get_res.json().get("sha") if get_res.status_code == 200 else None
             
-            sha = None
-            if get_response.status_code == 200:
-                sha = get_response.json()["sha"]
-                
-            update_payload = {
-                "message": f"✨ Customize {file_path} for {student_username}",
-                "content": base64.b64encode(json.dumps(content, indent=2).encode()).decode(),
+            put_payload = {
+                "message": f"🤖 Auto-setup: {filename}",
+                "content": base64.b64encode(json.dumps(content, indent=2).encode()).decode()
             }
-            if sha:
-                update_payload["sha"] = sha
-                
-            update_response = requests.put(get_url, headers=headers, json=update_payload)
-            
-            if update_response.status_code in [200, 201]:
-                print(f"✅ Updated {file_path}")
-        except Exception as e:
-            print(f"⚠️ Error updating {file_path}: {e}")
-    
-    # Handle the student's personal site
-    create_student_site(student_username, student_name, token, org_name)
-    
-    print(f"\n{'🎉'*30}")
-    print(f"SUCCESS! Deployment complete for {student_name}:")
-    print(f"   📚 Mission repo: https://github.com/{org_name}/{repo_name}")
-    print(f"   🌐 Personal site: https://{org_name}.github.io/{student_username}.github.io")
-    print(f"{'🎉'*30}\n")
+            if sha: put_payload["sha"] = sha
+            requests.put(file_url, headers=headers, json=put_payload)
+            print(f"📄 Pushed {filename}")
+
+    # 6. Ensure the Portfolio Site (Github Pages) is up
+    manage_student_site(student_username, student_name, token, org_name)
     
     return True
 
-def create_student_site(student_username, student_name, token, org_name):
-    """Create GitHub Pages site for student"""
+def manage_student_site(username, name, token, org):
+    """Ensures the student has a username.github.io repo in the organization."""
+    site_repo = f"{username}.github.io"
+    headers = {"Authorization": f"token {token}"}
     
-    site_repo = f"{student_username}.github.io"
-    headers = {
-        "Authorization": f"token {token}",
-        "Accept": "application/vnd.github.v3+json"
-    }
+    # Check if site already exists
+    res = requests.get(f"https://api.github.com/repos/{org}/{site_repo}", headers=headers)
     
-    # Using the general templates repo for the personal site
-    site_template = "codequest-templates" 
-    
-    print(f"\n📦 Checking personal site: {site_repo}")
-    
-    check_url = f"https://api.github.com/repos/{org_name}/{site_repo}"
-    check_response = requests.get(check_url, headers=headers)
-    
-    if check_response.status_code == 404:
-        print(f"📦 Creating personal site from template: {site_template}")
-        
-        create_url = f"https://api.github.com/repos/{org_name}/{site_template}/generate"
-        payload = {
-            "owner": org_name,
-            "name": site_repo,
-            "description": f"{student_name}'s Coding Quest",
-            "private": False, # Pages usually need public or Pro orgs for private
-            "include_all_branches": False
-        }
-        
-        response = requests.post(create_url, headers=headers, json=payload)
-        
-        if response.status_code == 201:
-            print(f"✅ Created site repo: {site_repo}")
-            time.sleep(5)
-            
-            # Enable GitHub Pages
-            pages_url = f"https://api.github.com/repos/{org_name}/{site_repo}/pages"
-            pages_payload = {
-                "source": {
-                    "branch": "main",
-                    "path": "/"
-                }
-            }
-            requests.post(pages_url, headers=headers, json=pages_payload)
-            
-            # Add student as collaborator
-            collab_url = f"https://api.github.com/repos/{org_name}/{site_repo}/collaborators/{student_username}"
-            requests.put(collab_url, headers=headers)
-            print(f"✅ Added {student_username} as collaborator to site")
-            
-            return True
-    else:
-        print(f"✅ Site already exists for {student_username}")
-        return True
+    if res.status_code == 404:
+        print(f"🌐 Creating portfolio site for {username}...")
+        url = f"https://api.github.com/repos/{org}/codequest-templates/generate"
+        # We use 'codequest-templates' specifically for the site UI
+        requests.post(url, headers=headers, json={
+            "owner": org, 
+            "name": site_repo, 
+            "private": False,
+            "description": f"{name}'s Coding Journey"
+        })
+        print(f"✅ Portfolio site queued for creation.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
