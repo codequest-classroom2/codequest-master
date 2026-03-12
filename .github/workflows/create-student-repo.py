@@ -112,11 +112,79 @@ def create_student_repo(student_username, student_name, mission_id):
             res = requests.put(file_url, headers=headers, json=put_payload)
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
+        # 6. Create Portfolio Site
+        create_portfolio_site(student_username, student_name, headers, org_name)
+
         print(f"\n✅ SETUP COMPLETE: https://github.com/{org_name}/{repo_name}")
         return True
     else:
         print(f"❌ FAIL: {response.status_code} - {response.text}")
         return False
+
+def create_portfolio_site(student_username, student_name, headers, org_name):
+    """Creates codequest-classroom/{username} as a public GitHub Pages portfolio site."""
+    repo_name = student_username
+    print(f"\n🌐 Step 4: Creating portfolio site ({org_name}/{repo_name})...")
+
+    # Create public repo
+    create_res = requests.post(
+        f"https://api.github.com/orgs/{org_name}/repos",
+        headers=headers,
+        json={
+            "name": repo_name,
+            "description": f"🚀 {student_name}'s CodeQuest Progress",
+            "private": False,
+            "auto_init": False
+        }
+    )
+    if create_res.status_code == 201:
+        print(f"✅ Portfolio repo created")
+        time.sleep(3)
+    elif create_res.status_code == 422:
+        print(f"ℹ️ Portfolio repo already exists, updating files...")
+    else:
+        print(f"❌ Failed to create portfolio repo: {create_res.status_code} - {create_res.text}")
+        return
+
+    # Fetch template files from codequest-templates/student-site-template
+    template_files = ["index.html", "style.css", "script.js"]
+    files_to_push = []
+    for filename in template_files:
+        url = f"https://api.github.com/repos/{org_name}/codequest-templates/contents/student-site-template/{filename}"
+        res = requests.get(url, headers=headers)
+        if res.status_code == 200:
+            # Re-encode cleanly (GitHub API wraps content with newlines)
+            raw = base64.b64decode(res.json()['content'])
+            files_to_push.append((filename, base64.b64encode(raw).decode()))
+        else:
+            print(f"⚠️ Could not fetch template {filename}: {res.status_code}")
+
+    # config.json with the real username so script.js knows who this is
+    config_content = json.dumps({"username": student_username}, indent=2)
+    files_to_push.append(("config.json", base64.b64encode(config_content.encode()).decode()))
+
+    # Push all files (GET sha first if file already exists)
+    for filename, content in files_to_push:
+        file_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/{filename}"
+        put_payload = {"message": f"🤖 Setup {filename}", "content": content}
+        existing = requests.get(file_url, headers=headers)
+        if existing.status_code == 200:
+            put_payload["sha"] = existing.json().get("sha")
+        res = requests.put(file_url, headers=headers, json=put_payload)
+        print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
+
+    # Enable GitHub Pages
+    pages_res = requests.post(
+        f"https://api.github.com/repos/{org_name}/{repo_name}/pages",
+        headers=headers,
+        json={"source": {"branch": "main", "path": "/"}}
+    )
+    if pages_res.status_code in [201, 409]:  # 409 = already enabled
+        print(f"✅ GitHub Pages enabled")
+    else:
+        print(f"⚠️ Pages enable returned {pages_res.status_code}: {pages_res.text}")
+
+    print(f"🌐 Portfolio site: https://{org_name}.github.io/{repo_name}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 4: sys.exit(1)
