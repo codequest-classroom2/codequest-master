@@ -163,6 +163,13 @@ def create_portfolio_site(student_username, student_name, headers, org_name):
     config_content = json.dumps({"username": student_username}, indent=2)
     files_to_push.append(("config.json", base64.b64encode(config_content.encode()).decode()))
 
+    # progress.json — initial record so the site loads before the student passes anything
+    progress_content = json.dumps({
+        "student": {"name": student_name, "username": student_username},
+        "progress": {"xp": 0, "completedMissions": [], "badges": [], "currentMission": mission_id}
+    }, indent=2)
+    files_to_push.append(("progress.json", base64.b64encode(progress_content.encode()).decode()))
+
     # Push all files (GET sha first if file already exists)
     for filename, content in files_to_push:
         file_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/{filename}"
