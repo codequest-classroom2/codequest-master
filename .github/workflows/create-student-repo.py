@@ -105,8 +105,12 @@ def create_student_repo(student_username, student_name, mission_id):
                 "message": f"🤖 Setup {filename}",
                 "content": base64.b64encode(content.encode()).decode()
             }
+            # GET existing file sha (required by GitHub API to update an existing file)
+            existing = requests.get(file_url, headers=headers)
+            if existing.status_code == 200:
+                put_payload["sha"] = existing.json().get("sha")
             res = requests.put(file_url, headers=headers, json=put_payload)
-            print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename}")
+            print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
         print(f"\n✅ SETUP COMPLETE: https://github.com/{org_name}/{repo_name}")
         return True
