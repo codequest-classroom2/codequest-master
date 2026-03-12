@@ -113,7 +113,7 @@ def create_student_repo(student_username, student_name, mission_id):
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
         # 6. Create Portfolio Site
-        create_portfolio_site(student_username, student_name, headers, org_name)
+        create_portfolio_site(student_username, student_name, mission_id, headers, org_name)
 
         print(f"\n✅ SETUP COMPLETE: https://github.com/{org_name}/{repo_name}")
         return True
@@ -121,7 +121,7 @@ def create_student_repo(student_username, student_name, mission_id):
         print(f"❌ FAIL: {response.status_code} - {response.text}")
         return False
 
-def create_portfolio_site(student_username, student_name, headers, org_name):
+def create_portfolio_site(student_username, student_name, mission_id, headers, org_name):
     """Creates codequest-classroom/{username} as a public GitHub Pages portfolio site."""
     repo_name = student_username
     print(f"\n🌐 Step 4: Creating portfolio site ({org_name}/{repo_name})...")
