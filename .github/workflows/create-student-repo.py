@@ -85,7 +85,7 @@ def create_student_repo(student_username, student_name, mission_id):
         "owner": org_name,
         "name": repo_name,
         "description": mission_data.get("description", "CodeQuest Mission"),
-        "private": True
+        "private": False
     }
     
     response = requests.post(create_url, headers=headers, json=payload)
