@@ -1,0 +1,15 @@
+{
+  "id": "js-4-1",
+  "title": "JavaScript Variables",
+  "level": "web-level-4",
+  "order": 10,
+  "points": 12,
+  "badge": "js-novice",
+  "description": "Use JavaScript variables to store and display data",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Declare variables using let or const",
+    "Use a variable to update page content",
+    "Use at least one string and one number variable"
+  ]
+}
