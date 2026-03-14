@@ -1,0 +1,22 @@
+{
+  "missionId": "css-3-2",
+  "checks": [
+    {
+      "name": "Grid container",
+      "test": "grep -i 'display.*grid' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Add display: grid to a container element"
+    },
+    {
+      "name": "grid-template-columns",
+      "test": "grep -i 'grid-template-columns:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Define columns using grid-template-columns"
+    },
+    {
+      "name": "Multiple grid items",
+      "test": "[ $(grep -c '<div' submissions/index.html 2>/dev/null) -ge 2 ]",
+      "feedback": "Add at least 2 items inside your grid container"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 3
+}
