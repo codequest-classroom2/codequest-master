@@ -1,0 +1,15 @@
+{
+  "id": "css-3-3",
+  "title": "CSS Positioning",
+  "level": "web-level-3",
+  "order": 9,
+  "points": 10,
+  "badge": "layout-novice",
+  "description": "Position elements using CSS position property",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Use at least one position property (relative, absolute, fixed, sticky)",
+    "Use top/bottom/left/right with a positioned element",
+    "Use z-index on at least one element"
+  ]
+}
