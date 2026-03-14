@@ -7,7 +7,11 @@
   "badge": "html-novice",
   "description": "Add links and images to your page",
   "template": "basic-web-mission",
-  "nextInLevel": [],
+  "nextInLevel": [
+    "css-2-1",
+    "css-2-2",
+    "css-2-3"
+  ],
   "requirements": [
     "Must have an anchor tag <a> with href",
     "Must have an image tag <img> with src",
