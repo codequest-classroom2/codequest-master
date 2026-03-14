@@ -3,17 +3,17 @@
   "checks": [
     {
       "name": "Background color",
-      "test": "grep -i 'background-color:' submissions/style.css",
+      "test": "grep -i 'background-color:' submissions/style.css submissions/index.html 2>/dev/null",
       "feedback": "Set a background-color on body or an element"
     },
     {
       "name": "Text color",
-      "test": "grep -i 'color:' submissions/style.css",
+      "test": "grep -i 'color:' submissions/style.css submissions/index.html 2>/dev/null",
       "feedback": "Set text color on at least one element"
     },
     {
       "name": "Multiple colors",
-      "test": "grep -i 'color:' submissions/style.css | wc -l | grep -q '[2-9]'",
+      "test": "[ $(grep -i 'color:' submissions/style.css submissions/index.html 2>/dev/null | wc -l) -ge 2 ]",
       "feedback": "Use at least two different colors in your CSS"
     }
   ],
