@@ -1,0 +1,15 @@
+{
+  "id": "js-4-3",
+  "title": "JavaScript DOM Events",
+  "level": "web-level-4",
+  "order": 12,
+  "points": 12,
+  "badge": "js-novice",
+  "description": "Make your page interactive with event listeners",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Add an event listener using addEventListener",
+    "Handle a click or input event",
+    "Update the DOM based on user interaction"
+  ]
+}
