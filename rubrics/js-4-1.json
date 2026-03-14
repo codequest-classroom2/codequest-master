@@ -1,0 +1,22 @@
+{
+  "missionId": "js-4-1",
+  "checks": [
+    {
+      "name": "let or const declaration",
+      "test": "grep -rh 'let \\|const ' submissions/ 2>/dev/null | grep -v '//'",
+      "feedback": "Declare at least one variable using let or const"
+    },
+    {
+      "name": "Updates DOM content",
+      "test": "grep -rh 'textContent\\|innerHTML\\|innerText' submissions/ 2>/dev/null",
+      "feedback": "Use a variable to update an element on the page"
+    },
+    {
+      "name": "At least 2 variables",
+      "test": "[ $(grep -rh 'let \\|const ' submissions/ 2>/dev/null | grep -v '//' | wc -l) -ge 2 ]",
+      "feedback": "Declare at least 2 variables"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 3
+}
