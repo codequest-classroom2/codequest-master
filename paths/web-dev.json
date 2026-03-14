@@ -9,46 +9,54 @@
     {
       "id": "web-level-1",
       "name": "HTML Basics",
+      "emoji": "📝",
       "order": 1,
-      "description": "Structure your first web pages",
+      "description": "🏗️ Build your first web pages!",
       "pointsToUnlock": 0,
-      "missions": ["html-1-1", "html-1-2", "html-1-3"],
-      "minMissionsToComplete": 2,
-      "pointsPerMission": 5,
-      "unlocks": ["web-level-2"]
+      "missions": [
+        {"id": "html-1-1", "name": "Structure",      "points": 5, "number": 1},
+        {"id": "html-1-2", "name": "Text",           "points": 5, "number": 2},
+        {"id": "html-1-3", "name": "Links & Images", "points": 5, "number": 3}
+      ]
     },
     {
       "id": "web-level-2",
       "name": "CSS Basics",
+      "emoji": "✨",
       "order": 2,
-      "description": "Make things beautiful",
+      "description": "🎨 Make things beautiful!",
       "pointsToUnlock": 10,
-      "missions": ["css-2-1", "css-2-2", "css-2-3"],
-      "minMissionsToComplete": 2,
-      "pointsPerMission": 8,
-      "unlocks": ["web-level-3"]
+      "missions": [
+        {"id": "css-2-1", "name": "Selectors", "points": 8, "number": 4},
+        {"id": "css-2-2", "name": "Box Model", "points": 8, "number": 5},
+        {"id": "css-2-3", "name": "Colors",    "points": 8, "number": 6}
+      ]
     },
     {
       "id": "web-level-3",
       "name": "CSS Layout",
+      "emoji": "📐",
       "order": 3,
-      "description": "Arrange elements on the page",
+      "description": "📐 Arrange elements on the page!",
       "pointsToUnlock": 26,
-      "missions": ["css-3-1", "css-3-2", "css-3-3"],
-      "minMissionsToComplete": 2,
-      "pointsPerMission": 10,
-      "unlocks": ["web-level-4"]
+      "missions": [
+        {"id": "css-3-1", "name": "Flexbox",  "points": 10, "number": 7},
+        {"id": "css-3-2", "name": "Grid",     "points": 10, "number": 8},
+        {"id": "css-3-3", "name": "Positioning", "points": 10, "number": 9}
+      ]
     },
     {
       "id": "web-level-4",
       "name": "JavaScript Basics",
+      "emoji": "⚡",
       "order": 4,
-      "description": "Make things interactive",
+      "description": "⚡ Make things interactive!",
       "pointsToUnlock": 46,
-      "missions": ["js-4-1", "js-4-2", "js-4-3"],
-      "minMissionsToComplete": 2,
-      "pointsPerMission": 12,
-      "unlocks": ["react-path", "vue-path", "backend-path"]
+      "missions": [
+        {"id": "js-4-1", "name": "Variables",  "points": 12, "number": 10},
+        {"id": "js-4-2", "name": "Functions",  "points": 12, "number": 11},
+        {"id": "js-4-3", "name": "DOM Events", "points": 12, "number": 12}
+      ]
     }
   ],
   
