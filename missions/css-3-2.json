@@ -1,0 +1,15 @@
+{
+  "id": "css-3-2",
+  "title": "CSS Grid",
+  "level": "web-level-3",
+  "order": 8,
+  "points": 10,
+  "badge": "layout-novice",
+  "description": "Use CSS Grid to create a multi-column layout",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Use display: grid on a container",
+    "Define grid columns with grid-template-columns",
+    "Place items in the grid"
+  ]
+}
