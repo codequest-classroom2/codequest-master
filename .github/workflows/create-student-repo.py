@@ -112,10 +112,13 @@ def create_student_repo(student_username, student_name, mission_id):
 
         # 5. Push Mission Files
         print(f"\n📝 Step 3: Pushing mission files...")
+        progress = student_data.get("progress", {})
         identity_content = {
             "username": student_username, "name": student_name,
-            "xp": student_data.get("progress", {}).get("xp", 0),
-            "currentMission": mission_id
+            "xp": progress.get("xp", 0),
+            "currentMission": mission_id,
+            "completedMissions": progress.get("completedMissions", []),
+            "unlockedMissions": progress.get("unlockedMissions", [])
         }
         
         files = [
