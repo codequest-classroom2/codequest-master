@@ -1,4 +1,3 @@
-
 {
   "missionId": "css-2-1",
   "checks": [
@@ -18,6 +17,6 @@
       "feedback": "Style your h1 with a color property"
     }
   ],
-  "totalPoints": 8,
-  "passingScore": 6
+  "totalPoints": 3,
+  "passingScore": 3
 }
