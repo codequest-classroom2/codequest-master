@@ -1,0 +1,22 @@
+{
+  "missionId": "js-4-3",
+  "checks": [
+    {
+      "name": "addEventListener",
+      "test": "grep -rh 'addEventListener' submissions/ 2>/dev/null",
+      "feedback": "Use addEventListener to listen for an event"
+    },
+    {
+      "name": "click or input event",
+      "test": "grep -rh 'addEventListener' submissions/ 2>/dev/null | grep -i 'click\\|input\\|change'",
+      "feedback": "Listen for a click, input, or change event"
+    },
+    {
+      "name": "DOM update in handler",
+      "test": "grep -rh 'textContent\\|innerHTML\\|style\\.' submissions/ 2>/dev/null",
+      "feedback": "Update something on the page inside your event handler"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 3
+}
