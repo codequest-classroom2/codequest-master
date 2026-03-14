@@ -1,0 +1,22 @@
+{
+  "missionId": "css-3-3",
+  "checks": [
+    {
+      "name": "Position property",
+      "test": "grep -i 'position:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Use a position property (relative, absolute, fixed, or sticky)"
+    },
+    {
+      "name": "Offset properties",
+      "test": "grep -i 'top:\\|bottom:\\|left:\\|right:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Use top, bottom, left, or right to offset a positioned element"
+    },
+    {
+      "name": "z-index",
+      "test": "grep -i 'z-index:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Add z-index to control stacking order"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 3
+}
