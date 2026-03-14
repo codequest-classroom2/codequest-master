@@ -1,0 +1,22 @@
+{
+  "missionId": "js-4-2",
+  "checks": [
+    {
+      "name": "Function defined",
+      "test": "grep -rh 'function ' submissions/ 2>/dev/null | grep -v '//'",
+      "feedback": "Define at least one function using the function keyword"
+    },
+    {
+      "name": "Function called",
+      "test": "grep -rh 'function ' submissions/ 2>/dev/null | grep -v '//' | grep -q '(' && grep -rh '\\w\\+()\\|\\w\\+([^)]' submissions/ 2>/dev/null | grep -v 'function ' | grep -q '.'",
+      "feedback": "Call your function somewhere in your code"
+    },
+    {
+      "name": "return statement",
+      "test": "grep -rh 'return ' submissions/ 2>/dev/null | grep -v '//'",
+      "feedback": "Your function should return a value"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 2
+}
