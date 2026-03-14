@@ -1,0 +1,15 @@
+{
+  "id": "css-3-1",
+  "title": "CSS Flexbox",
+  "level": "web-level-3",
+  "order": 7,
+  "points": 10,
+  "badge": "layout-novice",
+  "description": "Use Flexbox to arrange elements on the page",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Use display: flex on a container",
+    "Use justify-content to align items",
+    "Use flex-direction or flex-wrap"
+  ]
+}
