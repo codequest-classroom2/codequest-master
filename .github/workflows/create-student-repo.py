@@ -182,9 +182,10 @@ def create_portfolio_site(student_username, student_name, mission_id, headers, o
         url = f"https://api.github.com/repos/{org_name}/codequest-templates/contents/student-site-template/{filename}"
         res = requests.get(url, headers=headers)
         if res.status_code == 200:
-            # Re-encode cleanly (GitHub API wraps content with newlines)
             raw = base64.b64decode(res.json()['content'])
             files_to_push.append((filename, base64.b64encode(raw).decode()))
+        else:
+            print(f"⚠️ Could not fetch template {filename}: {res.status_code}")
 
     # Fetch web-dev.json from master repo and include in portfolio (makes it publicly accessible)
     webdev_res = requests.get(
@@ -196,8 +197,6 @@ def create_portfolio_site(student_username, student_name, mission_id, headers, o
         files_to_push.append(("web-dev.json", base64.b64encode(raw).decode()))
     else:
         print(f"⚠️ Could not fetch web-dev.json: {webdev_res.status_code}")
-        else:
-            print(f"⚠️ Could not fetch template {filename}: {res.status_code}")
 
     # config.json with the real username so script.js knows who this is
     config_content = json.dumps({"username": student_username}, indent=2)
