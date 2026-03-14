@@ -1,0 +1,22 @@
+{
+  "missionId": "css-3-1",
+  "checks": [
+    {
+      "name": "Flexbox container",
+      "test": "grep -i 'display.*flex' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Add display: flex to a container element"
+    },
+    {
+      "name": "justify-content",
+      "test": "grep -i 'justify-content:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Use justify-content to align your flex items"
+    },
+    {
+      "name": "flex direction or wrap",
+      "test": "grep -i 'flex-direction:\\|flex-wrap:' submissions/style.css submissions/index.html 2>/dev/null",
+      "feedback": "Use flex-direction or flex-wrap to control layout"
+    }
+  ],
+  "totalPoints": 3,
+  "passingScore": 3
+}
