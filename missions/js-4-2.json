@@ -1,0 +1,15 @@
+{
+  "id": "js-4-2",
+  "title": "JavaScript Functions",
+  "level": "web-level-4",
+  "order": 11,
+  "points": 12,
+  "badge": "js-novice",
+  "description": "Write JavaScript functions to organize your code",
+  "template": "basic-web-mission",
+  "requirements": [
+    "Define at least one function",
+    "Call the function in your code",
+    "Function takes at least one parameter or returns a value"
+  ]
+}
