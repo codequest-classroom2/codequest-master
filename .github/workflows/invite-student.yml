@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests PyNaCl
 
       - name: Create student's first mission repo
         env:

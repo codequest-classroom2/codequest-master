@@ -4,6 +4,28 @@ import requests
 import base64
 import sys
 import time
+from nacl import encoding, public as nacl_public
+
+def add_secret_to_repo(token, org_name, repo_name, headers):
+    """Adds GH_TOKEN secret to a repo so review.py can sync progress."""
+    # Get repo public key
+    pk_res = requests.get(
+        f"https://api.github.com/repos/{org_name}/{repo_name}/actions/secrets/public-key",
+        headers=headers
+    )
+    if pk_res.status_code != 200:
+        print(f"   ⚠️ Could not get repo public key: {pk_res.status_code}")
+        return
+    pk_data = pk_res.json()
+    pub_key_bytes = base64.b64decode(pk_data['key'])
+    sealed_box = nacl_public.SealedBox(nacl_public.PublicKey(pub_key_bytes))
+    encrypted = base64.b64encode(sealed_box.encrypt(token.encode())).decode()
+    res = requests.put(
+        f"https://api.github.com/repos/{org_name}/{repo_name}/actions/secrets/GH_TOKEN",
+        headers=headers,
+        json={"encrypted_value": encrypted, "key_id": pk_data['key_id']}
+    )
+    print(f"   {'✅' if res.status_code in [201, 204] else '❌'} GH_TOKEN secret ({res.status_code})")
 
 def create_student_repo(student_username, student_name, mission_id):
     """Generates the mission repo, custom README, and ensures the portfolio site exists."""
@@ -83,6 +105,10 @@ def create_student_repo(student_username, student_name, mission_id):
             print(f"⚠️ Invite failed ({invite_res.status_code}), trying collaborator fallback...")
             collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
             requests.put(collab_url, headers=headers, json={"permission": "push"})
+
+        # 4b. Add GH_TOKEN secret to the mission repo so review.py can sync progress
+        print(f"\n🔑 Step 2b: Adding GH_TOKEN secret to {repo_name}...")
+        add_secret_to_repo(token, org_name, repo_name, headers)
 
         # 5. Push Mission Files
         print(f"\n📝 Step 3: Pushing mission files...")
