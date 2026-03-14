@@ -166,15 +166,19 @@ def create_portfolio_site(student_username, student_name, mission_id, headers, o
     # progress.json — initial record so the site loads before the student passes anything
     progress_content = json.dumps({
         "student": {"name": student_name, "username": student_username},
-        "progress": {"xp": 0, "completedMissions": [], "badges": [], "currentMission": mission_id}
+        "progress": {"xp": 0, "completedMissions": [], "unlockedMissions": [mission_id], "badges": [], "currentMission": mission_id}
     }, indent=2)
     files_to_push.append(("progress.json", base64.b64encode(progress_content.encode()).decode()))
 
     # Push all files (GET sha first if file already exists)
+    # progress.json is NEVER overwritten — review.py owns it after initial creation
     for filename, content in files_to_push:
         file_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/{filename}"
-        put_payload = {"message": f"🤖 Setup {filename}", "content": content}
         existing = requests.get(file_url, headers=headers)
+        if filename == "progress.json" and existing.status_code == 200:
+            print(f"   ⏭️ progress.json already exists, skipping to preserve student progress")
+            continue
+        put_payload = {"message": f"🤖 Setup {filename}", "content": content}
         if existing.status_code == 200:
             put_payload["sha"] = existing.json().get("sha")
         res = requests.put(file_url, headers=headers, json=put_payload)
