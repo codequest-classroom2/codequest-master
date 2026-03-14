@@ -32,23 +32,34 @@ jobs:
 
       - name: Create student file
         run: |
-          # Copy template and fill in student details
-          cp students/TEMPLATE.json students/${{ github.event.inputs.student_username }}.json
-          
-          # Replace placeholders
-          sed -i "s/STUDENT_ID/$(uuidgen)/g" students/${{ github.event.inputs.student_username }}.json
-          sed -i "s/GITHUB_USERNAME/${{ github.event.inputs.student_username }}/g" students/${{ github.event.inputs.student_username }}.json
-          sed -i "s/FULL_NAME/${{ github.event.inputs.student_name }}/g" students/${{ github.event.inputs.student_username }}.json
-          sed -i "s/2024-01-01/$(date +%Y-%m-%d)/g" students/${{ github.event.inputs.student_username }}.json
-          sed -i "s/python-mission-1/${{ github.event.inputs.first_mission }}/g" students/${{ github.event.inputs.student_username }}.json
+          STUDENT_FILE="students/${{ github.event.inputs.student_username }}.json"
+          # Only create the student file if it doesn't already exist (skip for next-mission triggers)
+          if [ ! -f "$STUDENT_FILE" ]; then
+            cp students/TEMPLATE.json "$STUDENT_FILE"
+            sed -i "s/STUDENT_ID/$(uuidgen)/g" "$STUDENT_FILE"
+            sed -i "s/GITHUB_USERNAME/${{ github.event.inputs.student_username }}/g" "$STUDENT_FILE"
+            sed -i "s/FULL_NAME/${{ github.event.inputs.student_name }}/g" "$STUDENT_FILE"
+            sed -i "s/2024-01-01/$(date +%Y-%m-%d)/g" "$STUDENT_FILE"
+            sed -i "s/python-mission-1/${{ github.event.inputs.first_mission }}/g" "$STUDENT_FILE"
+            echo "created=true" >> $GITHUB_ENV
+          else
+            echo "created=false" >> $GITHUB_ENV
+            echo "ℹ️ Student file already exists, skipping creation."
+          fi
 
       - name: Commit student file
         run: |
           git config user.name "CodeQuest Bot"
           git config user.email "bot@codequest.dev"
           git add students/
-          git commit -m "✨ Add new student: ${{ github.event.inputs.student_username }}"
-          git push
+          # Only commit+push if a new file was actually created
+          if [ "$created" = "true" ]; then
+            git commit -m "✨ Add new student: ${{ github.event.inputs.student_username }}"
+            git pull --rebase origin main
+            git push
+          else
+            echo "ℹ️ No new student file, skipping commit."
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
