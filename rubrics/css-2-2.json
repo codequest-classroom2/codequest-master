@@ -3,17 +3,17 @@
   "checks": [
     {
       "name": "Padding property",
-      "test": "grep -i 'padding:' submissions/style.css",
+      "test": "grep -i 'padding:' submissions/style.css submissions/index.html 2>/dev/null",
       "feedback": "Add padding property to an element"
     },
     {
       "name": "Margin property",
-      "test": "grep -i 'margin:' submissions/style.css",
+      "test": "grep -i 'margin:' submissions/style.css submissions/index.html 2>/dev/null",
       "feedback": "Add margin property to an element"
     },
     {
       "name": "Border property",
-      "test": "grep -i 'border:' submissions/style.css",
+      "test": "grep -i 'border:' submissions/style.css submissions/index.html 2>/dev/null",
       "feedback": "Add border property to an element"
     }
   ],
