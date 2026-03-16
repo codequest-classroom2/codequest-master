@@ -141,7 +141,10 @@ def create_student_repo(student_username, student_name, mission_id):
             res = requests.put(file_url, headers=headers, json=put_payload)
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
-        # 6. Create Portfolio Site
+        # 6. Create sibling missions in the same level (pointsToUnlock: 0)
+        create_level_sibling_repos(student_username, student_name, mission_id, headers, org_name, token)
+
+        # 7. Create Portfolio Site
         create_portfolio_site(student_username, student_name, mission_id, headers, org_name)
 
         print(f"\n✅ SETUP COMPLETE: https://github.com/{org_name}/{repo_name}")
@@ -149,6 +152,30 @@ def create_student_repo(student_username, student_name, mission_id):
     else:
         print(f"❌ FAIL: {response.status_code} - {response.text}")
         return False
+
+def create_level_sibling_repos(student_username, student_name, mission_id, headers, org_name, token):
+    """Creates all other missions in the same level if that level has pointsToUnlock: 0."""
+    res = requests.get(
+        f"https://api.github.com/repos/{org_name}/codequest-master/contents/paths/web-dev.json",
+        headers=headers
+    )
+    if res.status_code != 200:
+        print(f"⚠️ Could not fetch web-dev.json: {res.status_code}")
+        return
+
+    path_config = json.loads(base64.b64decode(res.json()['content']))
+    for level in path_config.get('levels', []):
+        if level.get('pointsToUnlock', 1) != 0:
+            continue
+        mission_ids = [m['id'] if isinstance(m, dict) else m for m in level.get('missions', [])]
+        if mission_id not in mission_ids:
+            continue
+        # Found the level — create repos for all other missions in it
+        for sibling_id in mission_ids:
+            if sibling_id == mission_id:
+                continue
+            print(f"\n🔗 Creating sibling mission repo: {sibling_id}")
+            create_student_repo(student_username, student_name, sibling_id)
 
 def create_portfolio_site(student_username, student_name, mission_id, headers, org_name):
     """Creates codequest-classroom/{username} as a public GitHub Pages portfolio site."""
