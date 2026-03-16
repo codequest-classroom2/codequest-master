@@ -27,6 +27,43 @@ def add_secret_to_repo(token, org_name, repo_name, headers):
     )
     print(f"   {'✅' if res.status_code in [201, 204] else '❌'} GH_TOKEN secret ({res.status_code})")
 
+def build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name):
+    """Fetches README template and replaces all {{placeholders}}."""
+    res = requests.get(
+        f"https://api.github.com/repos/{org_name}/codequest-templates/contents/README.md",
+        headers=headers
+    )
+    if res.status_code == 200:
+        readme = base64.b64decode(res.json()['content']).decode('utf-8')
+    else:
+        print(f"⚠️ Could not fetch README template ({res.status_code}), using fallback")
+        readme = f"# 🚀 Mission: {mission_data['title']}\n\nHi {student_name}!"
+        return readme
+
+    # Replace simple placeholders
+    replacements = {
+        "{{mission.title}}":       mission_data.get('title', mission_id),
+        "{{mission.points}}":      str(mission_data.get('points', 0)),
+        "{{mission.badge}}":       mission_data.get('badge', ''),
+        "{{mission.level}}":       mission_data.get('level', ''),
+        "{{mission.description}}": mission_data.get('description', ''),
+        "{{mission.instructions}}":mission_data.get('instructions', mission_data.get('description', '')),
+        "{{student.name}}":        student_name,
+        "{{repo-name}}":           repo_name,
+    }
+    for placeholder, value in replacements.items():
+        readme = readme.replace(placeholder, value)
+
+    # Replace {{#each mission.requirements}}...{{/each}} loop
+    import re
+    def expand_requirements(match):
+        template_line = match.group(1)
+        lines = [template_line.replace("{{this}}", req) for req in mission_data.get('requirements', [])]
+        return "\n".join(lines)
+    readme = re.sub(r'\{\{#each mission\.requirements\}\}(.*?)\{\{/each\}\}', expand_requirements, readme, flags=re.DOTALL)
+
+    return readme
+
 def create_student_repo(student_username, student_name, mission_id):
     """Generates the mission repo, custom README, and ensures the portfolio site exists."""
     
@@ -121,11 +158,14 @@ def create_student_repo(student_username, student_name, mission_id):
             "unlockedMissions": progress.get("unlockedMissions", [])
         }
         
+        # Fetch README template and fill placeholders
+        readme_content = build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name)
+
         files = [
             ("identity.json", json.dumps(identity_content, indent=2)),
             ("mission.json", json.dumps(mission_data, indent=2)),
             ("rubric.json", json.dumps(rubric_data, indent=2)),
-            ("README.md", f"# 🚀 Mission: {mission_data['title']}\n\nHi {student_name}!")
+            ("README.md", readme_content)
         ]
 
         for filename, content in files:
