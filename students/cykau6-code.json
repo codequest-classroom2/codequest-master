@@ -7,7 +7,7 @@
     "status": "active"
   },
   "progress": {
-    "xp": 10,
+    "xp": 15,
     "completedMissions": [
       {
         "id": "html-1-1",
@@ -16,13 +16,16 @@
       {
         "id": "html-1-2",
         "at": "2026-03-17T01:14:27.904029"
+      },
+      {
+        "id": "html-1-3",
+        "at": "2026-03-17T01:21:33.465731"
       }
     ],
     "unlockedMissions": [
-      "html-1-1",
-      "html-1-3"
+      "html-1-1"
     ],
-    "currentMission": "html-1-2",
+    "currentMission": "html-1-3",
     "badges": []
   }
 }
