@@ -9,6 +9,7 @@
   "progress": {
     "xp": 0,
     "completedMissions": [],
+    "unlockedMissions": ["html-1-1"],
     "currentMission": "html-1-1",
     "badges": []
   }

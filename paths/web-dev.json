@@ -4,83 +4,47 @@
   "description": "Build websites with HTML, CSS, and JavaScript",
   "icon": "🌐",
   "color": "#E44D26",
-  
+
   "levels": [
     {
-      "id": "web-level-1",
+      "id": "html-basics",
       "name": "HTML Basics",
       "emoji": "📝",
-      "order": 1,
       "description": "🏗️ Build your first web pages!",
-      "pointsToUnlock": 0,
+      "unlockCondition": null,
       "missions": [
         {"id": "html-1-1", "name": "Structure",      "points": 5, "number": 1},
-        {"id": "html-1-2", "name": "Text",           "points": 5, "number": 2},
-        {"id": "html-1-3", "name": "Links & Images", "points": 5, "number": 3}
+        {"id": "html-1-2", "name": "Links & Images", "points": 5, "number": 2},
+        {"id": "html-1-3", "name": "Forms",          "points": 5, "number": 3}
       ]
     },
     {
-      "id": "web-level-2",
-      "name": "CSS Basics",
+      "id": "css-path",
+      "name": "Web Zone — CSS",
       "emoji": "✨",
-      "order": 2,
       "description": "🎨 Make things beautiful!",
-      "pointsToUnlock": 10,
+      "unlockCondition": {
+        "xp": 15,
+        "requiredMissions": ["html-1-1", "html-1-2", "html-1-3"]
+      },
       "missions": [
-        {"id": "css-2-1", "name": "Selectors", "points": 8, "number": 4},
-        {"id": "css-2-2", "name": "Box Model", "points": 8, "number": 5},
-        {"id": "css-2-3", "name": "Colors",    "points": 8, "number": 6}
+        {"id": "css-2-1", "name": "Selectors", "points": 5, "number": 4},
+        {"id": "css-2-2", "name": "Box Model", "points": 5, "number": 5},
+        {"id": "css-2-3", "name": "Flexbox",   "points": 5, "number": 6}
       ]
     },
     {
-      "id": "web-level-3",
-      "name": "CSS Layout",
-      "emoji": "📐",
-      "order": 3,
-      "description": "📐 Arrange elements on the page!",
-      "pointsToUnlock": 26,
+      "id": "capstone",
+      "name": "Capstone",
+      "emoji": "🏆",
+      "description": "🚀 Build a full webpage!",
+      "unlockCondition": {
+        "xp": 45,
+        "requiredMissions": ["css-2-3"]
+      },
       "missions": [
-        {"id": "css-3-1", "name": "Flexbox",  "points": 10, "number": 7},
-        {"id": "css-3-2", "name": "Grid",     "points": 10, "number": 8},
-        {"id": "css-3-3", "name": "Positioning", "points": 10, "number": 9}
-      ]
-    },
-    {
-      "id": "web-level-4",
-      "name": "JavaScript Basics",
-      "emoji": "⚡",
-      "order": 4,
-      "description": "⚡ Make things interactive!",
-      "pointsToUnlock": 46,
-      "missions": [
-        {"id": "js-4-1", "name": "Variables",  "points": 12, "number": 10},
-        {"id": "js-4-2", "name": "Functions",  "points": 12, "number": 11},
-        {"id": "js-4-3", "name": "DOM Events", "points": 12, "number": 12}
+        {"id": "capstone-1", "name": "Build a webpage", "points": 5, "number": 7}
       ]
     }
-  ],
-  
-  "branches": {
-    "react-path": {
-      "name": "React.js",
-      "description": "Build modern web apps",
-      "pointsToUnlock": 100,
-      "icon": "⚛️",
-      "color": "#61DAFB"
-    },
-    "vue-path": {
-      "name": "Vue.js",
-      "description": "Progressive JavaScript framework",
-      "pointsToUnlock": 100,
-      "icon": "🟢",
-      "color": "#42B883"
-    },
-    "backend-path": {
-      "name": "Backend Development",
-      "description": "Server-side programming",
-      "pointsToUnlock": 150,
-      "icon": "⚙️",
-      "color": "#404040"
-    }
-  }
+  ]
 }
