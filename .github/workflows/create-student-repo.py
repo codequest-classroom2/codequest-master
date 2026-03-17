@@ -131,17 +131,14 @@ def create_student_repo(student_username, student_name, mission_id):
         print(f"✅ Repo created: {repo_name}")
         time.sleep(5) # Buffer for GitHub
         
-        # 4. Invite Student (Method 1: Direct Invitation)
-        print(f"\n📧 Step 2: Inviting {student_username}...")
-        invite_url = f"https://api.github.com/repos/{org_name}/{repo_name}/invitations"
-        invite_res = requests.post(invite_url, headers=headers, json={"invitee": student_username, "permissions": "push"})
-        
-        if invite_res.status_code == 201:
-            print(f"✅ Invite sent! URL: {invite_res.json().get('html_url')}")
+        # 4. Add student as collaborator with Write access
+        print(f"\n👤 Step 2: Adding {student_username} as collaborator (Write access)...")
+        collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
+        collab_res = requests.put(collab_url, headers=headers, json={"permission": "push"})
+        if collab_res.status_code in [201, 204]:
+            print(f"✅ {student_username} added as collaborator")
         else:
-            print(f"⚠️ Invite failed ({invite_res.status_code}), trying collaborator fallback...")
-            collab_url = f"https://api.github.com/repos/{org_name}/{repo_name}/collaborators/{student_username}"
-            requests.put(collab_url, headers=headers, json={"permission": "push"})
+            print(f"❌ Failed to add collaborator ({collab_res.status_code}): {collab_res.text}")
 
         # 4b. Add GH_TOKEN secret to the mission repo so review.py can sync progress
         print(f"\n🔑 Step 2b: Adding GH_TOKEN secret to {repo_name}...")
