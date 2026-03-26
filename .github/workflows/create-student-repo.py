@@ -28,15 +28,26 @@ def add_secret_to_repo(token, org_name, repo_name, headers):
     print(f"   {'✅' if res.status_code in [201, 204] else '❌'} GH_TOKEN secret ({res.status_code})")
 
 def build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name):
-    """Fetches README template and replaces all {{placeholders}}."""
-    res = requests.get(
-        f"https://api.github.com/repos/{org_name}/codequest-templates/contents/README.md",
-        headers=headers
-    )
-    if res.status_code == 200:
-        readme = base64.b64decode(res.json()['content']).decode('utf-8')
-    else:
-        print(f"⚠️ Could not fetch README template ({res.status_code}), using fallback")
+    """Fetches README template and replaces all {{placeholders}}.
+
+    Tries mission-specific template first (basic-web-mission/README.md),
+    then falls back to the root README.md.
+    """
+    readme = None
+    candidates = ["basic-web-mission/README.md", "README.md"]
+    for path in candidates:
+        res = requests.get(
+            f"https://api.github.com/repos/{org_name}/codequest-templates/contents/{path}",
+            headers=headers
+        )
+        if res.status_code == 200:
+            readme = base64.b64decode(res.json()['content']).decode('utf-8')
+            print(f"   📄 README template: {path}")
+            break
+        print(f"   ℹ️ {path} not found ({res.status_code}), trying next...")
+
+    if readme is None:
+        print(f"⚠️ Could not fetch any README template, using fallback")
         readme = f"# 🚀 Mission: {mission_data['title']}\n\nHi {student_name}!"
         return readme
 
@@ -178,10 +189,24 @@ def create_student_repo(student_username, student_name, mission_id):
             res = requests.put(file_url, headers=headers, json=put_payload)
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
-        # 6. Create sibling missions in the same level (pointsToUnlock: 0)
+        # 6. Enable GitHub Pages so the submit.html button in README actually works.
+        #    The coding environment lives at:
+        #    https://codequest-classroom.github.io/{repo_name}/basic-web-mission/submit.html
+        print(f"\n🌐 Step 4: Enabling GitHub Pages for {repo_name}...")
+        pages_res = requests.post(
+            f"https://api.github.com/repos/{org_name}/{repo_name}/pages",
+            headers=headers,
+            json={"source": {"branch": "main", "path": "/"}}
+        )
+        if pages_res.status_code in [201, 409]:   # 409 = already enabled
+            print(f"   ✅ GitHub Pages enabled → https://codequest-classroom.github.io/{repo_name}/")
+        else:
+            print(f"   ⚠️ Pages enable returned {pages_res.status_code}: {pages_res.text}")
+
+        # 7. Create sibling missions in the same level (pointsToUnlock: 0)
         create_level_sibling_repos(student_username, student_name, mission_id, headers, org_name, token)
 
-        # 7. Create Portfolio Site
+        # 8. Create Portfolio Site
         create_portfolio_site(student_username, student_name, mission_id, headers, org_name)
 
         print(f"\n✅ SETUP COMPLETE: https://github.com/{org_name}/{repo_name}")
