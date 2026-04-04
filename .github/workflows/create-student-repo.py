@@ -83,7 +83,7 @@ def create_student_repo(student_username, student_name, mission_id):
     print("="*60)
     
     token = os.environ.get("GH_TOKEN")
-    org_name = "codequest-classroom"
+    org_name = "codequest-classroom2"
     headers = {
         "Authorization": f"token {token}",
         "Accept": "application/vnd.github.v3+json"
@@ -191,7 +191,7 @@ def create_student_repo(student_username, student_name, mission_id):
 
         # 6. Enable GitHub Pages so the submit.html button in README actually works.
         #    The coding environment lives at:
-        #    https://codequest-classroom.github.io/{repo_name}/basic-web-mission/submit.html
+        #    https://codequest-classroom2.github.io/{repo_name}/basic-web-mission/submit.html
         print(f"\n🌐 Step 4: Enabling GitHub Pages for {repo_name}...")
         pages_res = requests.post(
             f"https://api.github.com/repos/{org_name}/{repo_name}/pages",
@@ -199,7 +199,7 @@ def create_student_repo(student_username, student_name, mission_id):
             json={"source": {"branch": "main", "path": "/"}}
         )
         if pages_res.status_code in [201, 409]:   # 409 = already enabled
-            print(f"   ✅ GitHub Pages enabled → https://codequest-classroom.github.io/{repo_name}/")
+            print(f"   ✅ GitHub Pages enabled → https://codequest-classroom2.github.io/{repo_name}/")
         else:
             print(f"   ⚠️ Pages enable returned {pages_res.status_code}: {pages_res.text}")
 
@@ -240,7 +240,7 @@ def create_level_sibling_repos(student_username, student_name, mission_id, heade
             create_student_repo(student_username, student_name, sibling_id)
 
 def create_portfolio_site(student_username, student_name, mission_id, headers, org_name):
-    """Creates codequest-classroom/{username} as a public GitHub Pages portfolio site."""
+    """Creates codequest-classroom2/{username} as a public GitHub Pages portfolio site."""
     repo_name = student_username
     print(f"\n🌐 Step 4: Creating portfolio site ({org_name}/{repo_name})...")
 
