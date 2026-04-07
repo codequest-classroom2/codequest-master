@@ -165,7 +165,25 @@ def create_student_repo(student_username, student_name, mission_id):
             "completedMissions": progress.get("completedMissions", []),
             "unlockedMissions": progress.get("unlockedMissions", [])
         }
-        
+
+        # Fetch githubClientId and oauthCallbackUrl from the canonical template so
+        # every student repo always gets the current values without manual edits.
+        template_res = requests.get(
+            f"https://api.github.com/repos/{org_name}/codequest-templates/contents/mission.json",
+            headers=headers
+        )
+        if template_res.status_code == 200:
+            template_mission = json.loads(base64.b64decode(template_res.json()['content']))
+            mission_data['githubClientId']   = template_mission.get('githubClientId', '')
+            mission_data['oauthCallbackUrl'] = template_mission.get('oauthCallbackUrl', '')
+            print(f"   ✅ Merged githubClientId + oauthCallbackUrl from template mission.json")
+        else:
+            print(f"   ⚠️ Could not fetch template mission.json ({template_res.status_code}) — githubClientId may be missing")
+
+        # Stamp the actual repo coordinates so submit.html can find the right repo.
+        mission_data['repoOwner'] = org_name   # codequest-classroom2
+        mission_data['repoName']  = repo_name  # e.g. alice-basic-web-mission
+
         # Fetch README template and fill placeholders
         readme_content = build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name)
 
