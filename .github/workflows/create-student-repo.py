@@ -165,6 +165,15 @@ def create_student_repo(student_username, student_name, mission_id):
             "completedMissions": progress.get("completedMissions", []),
             "unlockedMissions": progress.get("unlockedMissions", [])
         }
+        # Explicitly replace any template placeholders in the serialised JSON so
+        # the correct values always reach the student repo even if the template
+        # file still contains the raw {{…}} strings.
+        identity_json = (
+            json.dumps(identity_content, indent=2)
+            .replace("{{student_username}}", student_username)
+            .replace("{{student_name}}", student_name)
+            .replace("{{mission_id}}", mission_id)
+        )
 
         # Fetch githubClientId and oauthCallbackUrl from the canonical template so
         # every student repo always gets the current values without manual edits.
@@ -188,7 +197,7 @@ def create_student_repo(student_username, student_name, mission_id):
         readme_content = build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name)
 
         files = [
-            ("identity.json", json.dumps(identity_content, indent=2)),
+            ("identity.json", identity_json),
             ("mission.json", json.dumps(mission_data, indent=2)),
             ("rubric.json", json.dumps(rubric_data, indent=2)),
             ("README.md", readme_content)
@@ -200,10 +209,20 @@ def create_student_repo(student_username, student_name, mission_id):
                 "message": f"🤖 Setup {filename}",
                 "content": base64.b64encode(content.encode()).decode()
             }
-            # GET existing file sha (required by GitHub API to update an existing file)
-            existing = requests.get(file_url, headers=headers)
-            if existing.status_code == 200:
-                put_payload["sha"] = existing.json().get("sha")
+            # GET existing file sha (required by GitHub API to update an existing file).
+            # Retry up to 5 times with backoff — newly generated repos can take a few
+            # seconds before their files are accessible via the API.
+            sha_found = False
+            for attempt in range(5):
+                existing = requests.get(file_url, headers=headers)
+                if existing.status_code == 200:
+                    put_payload["sha"] = existing.json().get("sha")
+                    sha_found = True
+                    break
+                if attempt < 4:
+                    time.sleep(3)
+            if not sha_found:
+                print(f"   ⚠️ {filename}: could not fetch existing sha after retries, attempting create")
             res = requests.put(file_url, headers=headers, json=put_payload)
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
