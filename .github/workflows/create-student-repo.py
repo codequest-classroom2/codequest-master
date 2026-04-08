@@ -207,6 +207,28 @@ def create_student_repo(student_username, student_name, mission_id):
             res = requests.put(file_url, headers=headers, json=put_payload)
             print(f"   {'✅' if res.status_code in [200, 201] else '❌'} {filename} ({res.status_code})")
 
+        # Fetch submit.html fresh from the template repo so every student always
+        # gets the latest version (never cached or hardcoded).
+        print(f"\n   📄 Fetching latest submit.html from codequest-templates...")
+        submit_template_res = requests.get(
+            f"https://api.github.com/repos/{org_name}/codequest-templates/contents/basic-web-mission/submit.html",
+            headers=headers
+        )
+        if submit_template_res.status_code == 200:
+            submit_b64 = submit_template_res.json()['content'].replace('\n', '')
+            submit_file_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents/basic-web-mission/submit.html"
+            submit_put_payload = {
+                "message": "🤖 Setup basic-web-mission/submit.html",
+                "content": submit_b64
+            }
+            existing_submit = requests.get(submit_file_url, headers=headers)
+            if existing_submit.status_code == 200:
+                submit_put_payload["sha"] = existing_submit.json().get("sha")
+            submit_res = requests.put(submit_file_url, headers=headers, json=submit_put_payload)
+            print(f"   {'✅' if submit_res.status_code in [200, 201] else '❌'} basic-web-mission/submit.html ({submit_res.status_code})")
+        else:
+            print(f"   ⚠️ Could not fetch submit.html from template repo ({submit_template_res.status_code})")
+
         # 6. Enable GitHub Pages so the submit.html button in README actually works.
         #    The coding environment lives at:
         #    https://codequest-classroom2.github.io/{repo_name}/basic-web-mission/submit.html
