@@ -11,12 +11,11 @@
     "completedMissions": [
       {
         "id": "html-1-1",
-        "at": "2026-04-09T19:15:21.404697"
+        "at": "2026-04-09T19:20:49.014105"
       }
     ],
     "unlockedMissions": [
-      "html-1-1",
-      "html-1-2"
+      "html-1-1"
     ],
     "currentMission": "html-1-1",
     "badges": []
