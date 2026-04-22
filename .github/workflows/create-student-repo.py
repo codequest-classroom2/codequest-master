@@ -6,6 +6,21 @@ import sys
 import time
 from nacl import encoding, public as nacl_public
 
+STARTER_HTML = """\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Mission</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <p>Edit this file to complete your mission!</p>
+</body>
+</html>
+"""
+
 def add_secret_to_repo(token, org_name, repo_name, headers):
     """Adds GH_TOKEN secret to a repo so review.py can sync progress."""
     # Get repo public key
@@ -197,10 +212,11 @@ def create_student_repo(student_username, student_name, mission_id):
         readme_content = build_readme(student_name, mission_id, repo_name, mission_data, headers, org_name)
 
         files = [
-            ("identity.json", identity_json),
-            ("mission.json", json.dumps(mission_data, indent=2)),
-            ("rubric.json", json.dumps(rubric_data, indent=2)),
-            ("README.md", readme_content)
+            ("identity.json",          identity_json),
+            ("mission.json",           json.dumps(mission_data, indent=2)),
+            ("rubric.json",            json.dumps(rubric_data, indent=2)),
+            ("README.md",              readme_content),
+            ("submissions/index.html", STARTER_HTML),
         ]
 
         for filename, content in files:
@@ -240,9 +256,13 @@ def create_student_repo(student_username, student_name, mission_id):
                 "message": "🤖 Setup basic-web-mission/submit.html",
                 "content": submit_b64
             }
-            existing_submit = requests.get(submit_file_url, headers=headers)
-            if existing_submit.status_code == 200:
-                submit_put_payload["sha"] = existing_submit.json().get("sha")
+            for attempt in range(5):
+                existing_submit = requests.get(submit_file_url, headers=headers)
+                if existing_submit.status_code == 200:
+                    submit_put_payload["sha"] = existing_submit.json().get("sha")
+                    break
+                if attempt < 4:
+                    time.sleep(3)
             submit_res = requests.put(submit_file_url, headers=headers, json=submit_put_payload)
             print(f"   {'✅' if submit_res.status_code in [200, 201] else '❌'} basic-web-mission/submit.html ({submit_res.status_code})")
         else:
